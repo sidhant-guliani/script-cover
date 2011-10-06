@@ -1,0 +1,138 @@
+// Copyright 2011 Google Inc. All Rights Reserved.
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//     http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+
+/**
+ * @fileoverview Defines html components used to render the Extension's popup.
+ * @author ekamenskaya@google.com (Ekaterina Kamenskaya)
+ */
+
+
+{namespace brt.content.Templates.popup}
+
+
+/**
+ * Renders the entire page, conditionally including
+ * various parts based on whether or not the user
+ * is logged in.
+ *
+ * @param rootFolder
+ * @param globalCoverageCurrent The global coverage statistics.
+ *    Each object should have a name, img, and description among
+ *    other things.  See popup.js for an example.
+ * @param globalCoverageLast
+ * @param globalCommandCounter
+ */
+{template .all}
+  <link rel="stylesheet" href="{$rootFolder}styles/popup.css"
+    type="text/css">
+  <div id="globalCoverage">
+    {call .header data="all" /}
+  </div>
+{/template}
+
+
+/**
+ * Displays message asking to wait for results.
+ */
+{template .waiting}
+  <div class="waiting">Please, wait...</div>
+{/template}
+
+
+/**
+ * Displays the logo image.
+ */
+{template .logo}
+  <img src="brticon.png" class="logo">
+{/template}
+
+
+/**
+ * Prints the version number in a span.
+ *
+ * @param globalCoverageCurrent
+ * @param globalCoverageLast
+ * @param globalCommandCounter
+ */
+{template .header}
+  <div class="header">
+    <div style="width:500px; position:relative; height:3em">
+      <div class="logo" class="file-coverage-percent">
+        {call .logo /}
+      </div>
+      <div class="current-details">
+        <div class="see-details">current</div>
+        <span class="global-coverage-current">{$globalCoverageCurrent}</span>
+      </div>
+      <div class="last-details">
+        <div class="see-details"> last </div>
+        <span class="global-coverage-last">{$globalCoverageLast}</span>
+      </div>
+    </div>
+    <div class="stat-line">
+      <div class="command-counter" id="commandCounter">
+        {$globalCommandCounter} blocks tracked
+      </div>
+      <div class="see-details see-details-position" id="seeDetails">
+        (click to see details)
+      </div>
+    </div>
+    <div id="fileStatsTitle" class="stat-line">
+    </div>
+    <div id="fileStats">
+    </div>
+    <div class="see-full-report"
+      style="color:blue;font-family:Arial;font-size:11pt;text-align:center;"
+      onmouseover="this.style.cursor='pointer';">
+      See full coverage report
+    <div>
+  </div>
+{/template}
+
+
+/**
+ * Displays general statistics for files.
+ * @param fileCoveragePercent
+ * @param fileName
+ * @param fileExecutedCounter
+ * @param fileCommandCounter
+ */
+{template .fileStats}
+  <div class="stat-line">
+    <form name="fileStatsForm" style="margin-bottom:0;">
+      <div class="file-coverage-percent"> {$fileCoveragePercent}</div>
+      <input type="checkbox" name="track" class="option-track" checked> 
+      <div class="file-name"> {$fileName}</div>
+      <div class="blocks-stats">
+        <span class="file-executed-counter">{$fileExecutedCounter}/</span>
+        <span class="file-command-counter-tracked">{$fileCommandCounter}</span>
+        <span class="file-command-counter-total">/{$fileCommandCounter}</span>
+      </div>
+    </form>
+  </div>
+{/template}
+
+
+/**
+ * Displays titles for files general statistics.
+ */
+{template .fileStatsTitle}
+  <div class="see-details file-coverage-percent"> %
+  </div>
+  <div class="see-details file-name"> file/member
+  </div>
+  <div class="see-details blocks-stats">cov/track/total blocks
+  </div>
+{/template}
+

@@ -1,0 +1,98 @@
+// Copyright 2011 Google Inc. All Rights Reserved.
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//     http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+
+/**
+ * @fileoverview Defines html components used to render the full coverage
+ * report.
+ * @author ekamenskaya@google.com (Ekaterina Kamenskaya)
+ */
+
+
+{namespace brt.content.Templates.coverageReport}
+
+
+/**
+ * Global template for the entire page.
+ *
+ * @param rootFolder
+ */
+{template .all}
+  <link rel="stylesheet" href="{$rootFolder}styles/coverage_report.css"
+        type="text/css">
+  <title> Coverage report </title>
+  <div id="mergedDataDiv">
+    <h2 id="globalStat"></h2>
+  </div>
+{/template}
+
+
+/**
+ * Information on total coverage.
+ *
+ * @param globalCommandCounter
+ * @param globalExecutedCounter
+ * @param globalCoveragePercent
+ */
+{template .globalStat}
+   Summary: total lines: {$globalCommandCounter},
+   executed: {$globalExecutedCounter} ({$globalCoveragePercent}%)
+{/template}
+
+
+/**
+ * Information on coverage for one page.
+ *
+ * @param pageNum
+ * @param pageScriptInfoUrl
+ * @param pageCommandCounter
+ * @param pageExecutedCounter
+ * @param pageCoveragePercent
+ */
+{template .pageStat}
+  <div id="container_page{$pageNum}" class="coverageContainer">
+    <div id="mergedDataDiv_containerHead_page{$pageNum}" class="coverageHead">
+      Page URL: <span>{$pageScriptInfoUrl}</span><br>
+      Lines: {$pageCommandCounter},
+      executed: {$pageExecutedCounter} ({$pageCoveragePercent}%)
+    </div>
+    <div id="mergedDataDiv_containerBody_page{$pageNum}" class="coverageBody">
+    </div>
+  </div>
+  <div class="sourceContainer">
+  </div>
+{/template}
+
+
+/**
+ * Information on coverage for one script.
+ *
+ * @param pageNum
+ * @param scriptNum
+ * @param scriptSrc
+ * @param scriptCommandCounter
+ * @param scriptExecutedCounter
+ * @param scriptCoveragePercent
+ */
+{template .scriptStat}
+  <div id="mergedDataDiv_scriptHead_page{$pageNum}_script{$scriptNum}"
+       class="scriptHead">
+    Code from {$scriptSrc}:<br>
+    Lines: {$scriptCommandCounter}, executed: {$scriptExecutedCounter}
+    ({$scriptCoveragePercent}%)
+  </div>
+  <div id="mergedDataDiv_scriptBody_page{$pageNum}_script{$scriptNum}"
+       class="scriptBody">
+  </div>
+{/template}
+
