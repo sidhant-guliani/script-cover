@@ -21,7 +21,6 @@ span {
 }
 
 .coverageHead {
-  background-color: #aabbcc;
   display: block;
   cursor: hand;
   margin: 2px;
@@ -40,23 +39,24 @@ span {
   position: absolute;
   right: 0;
   overflow: auto;
+  white-space: nowrap;
 }
 
-.scriptHead {
-  background-color: #ddddff;
+.scriptHead, .highlightedScriptHead {
   cursor: hand;
   margin: 2px;
   padding: 2px;
-  font-weight: bold;
   margin-left: 30px;
+  word-wrap: break-word;
+}
+
+.highlightedScriptHead {
+  background-color: #eeeeee;
+  font-weight: bold;
 }
 
 .coverageHead:hover, .scriptHead:hover {
   text-decoration: underline;
-}
-
-.scriptHead {
-  word-wrap: break-word;
 }
 
 .coverageBody {

@@ -116,7 +116,10 @@ function testShowHideStatsWithoutAnnotatedSource() {
 
 function testShowHideStatsWithAnnotatedSource() {
   var element = goog.dom.createDom(goog.dom.TagName.DIV);
-  brt.coverageHelper.showHideStats_(element, 'annotatedSource');
+  var srcElement = goog.dom.createDom(goog.dom.TagName.DIV);
+  var coverageDom = new goog.dom.DomHelper(goog.dom.getDocument());
+  brt.coverageHelper.showHideStats_(element, 'annotatedSource', srcElement,
+      coverageDom);
   assertEquals('block', goog.style.getStyle(element, 'display'));
   assertEquals('annotatedSource', element.innerHTML);
 }

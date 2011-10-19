@@ -62,9 +62,10 @@
 {template .pageStat}
   <div id="container_page{$pageNum}" class="coverageContainer">
     <div id="mergedDataDiv_containerHead_page{$pageNum}" class="coverageHead">
-      Page URL: <span>{$pageScriptInfoUrl}</span><br>
-      Lines: {$pageCommandCounter},
-      executed: {$pageExecutedCounter} ({$pageCoveragePercent}%)
+      Page URL: <span>{$pageScriptInfoUrl}</span>
+      <div style="float:right">
+        {$pageExecutedCounter}/{$pageCommandCounter} ({$pageCoveragePercent}%)
+      </div>
     </div>
     <div id="mergedDataDiv_containerBody_page{$pageNum}" class="coverageBody">
     </div>
@@ -87,9 +88,11 @@
 {template .scriptStat}
   <div id="mergedDataDiv_scriptHead_page{$pageNum}_script{$scriptNum}"
        class="scriptHead">
-    Code from {$scriptSrc}:<br>
-    Lines: {$scriptCommandCounter}, executed: {$scriptExecutedCounter}
-    ({$scriptCoveragePercent}%)
+    Code from {$scriptSrc}:
+    <div style="float:right">
+      {$scriptExecutedCounter}/{$scriptCommandCounter}
+      ({$scriptCoveragePercent}%)
+    </div>
   </div>
   <div id="mergedDataDiv_scriptBody_page{$pageNum}_script{$scriptNum}"
        class="scriptBody">

@@ -299,7 +299,7 @@ brt.coverageHelper.constructReportDiv = function(coverageDocument,
       // Adds listener to display/hide annotated source code.
       goog.events.listen(scriptHead, 'click',
           goog.bind(this.showHideStats_, this, scriptBody,
-          scriptBodyHTML[scriptNum]));
+          scriptBodyHTML[scriptNum], scriptHead, coverageDom));
     }
     goog.style.showElement(coverageBody, false);
     // Adds listener to display/hide script statistics.
@@ -324,10 +324,19 @@ brt.coverageHelper.constructReportDiv = function(coverageDocument,
  * @param {Element} element The element to display or hide.
  * @param {?string} annotatedSource The html string consisting of annotated
  *     source code.
+ * @param {?Element} srcElement The div that was clicked. Contains information
+ *     about the script whose coverage statistics should be displayed/hidden.
+ * @param {?goog.dom.DomHelper} dom The DOM of the current page.
  * @private
  */
-brt.coverageHelper.showHideStats_ = function(element, annotatedSource) {
+brt.coverageHelper.showHideStats_ = function(element, annotatedSource,
+    srcElement, dom) {
   if (annotatedSource) {
+    var selectedElements = dom.getElementsByClass('highlightedScriptHead');
+    for (var i = 0; i < selectedElements.length; i++) {
+      selectedElements[i].className = 'scriptHead';
+    }
+    srcElement.className = 'highlightedScriptHead';
     element.innerHTML = annotatedSource;
     element.style.display = 'block';
     return;

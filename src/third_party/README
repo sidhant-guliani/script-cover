@@ -1,0 +1,11 @@
+This is a fork of UglifyJS library used by ScriptCover Tool.
+
+The main changes:
+- When JS code is built using AST tree, instrumentation code is inserted.
+  For every semantic block,
+  - "%BRT_BLOCK_BEGIN%
+     window.scriptObjects[%BRT_SCRIPT_INDEX%].executedBlock[%BRT_BLOCK_COUNTER%]
+     = true;" is added to its beginning;
+  - "%BRT_BLOCK_END%" is added at the end.
+- Several Node.js specific exports were commented to provide independency.
+
