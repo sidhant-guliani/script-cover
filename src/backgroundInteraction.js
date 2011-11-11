@@ -90,14 +90,17 @@ brt.backgroundInteraction.setBeforeUnloadHandler = function() {
   goog.events.listen(goog.dom.getDocument(),
       brt.constants.EventType.BEFORE_UNLOAD,
       brt.backgroundInteraction.showCoverage, true);
+
+  var coverageContainerDiv = goog.dom.getElement('coverageContainerDiv');
+  if (coverageContainerDiv) {
+    goog.events.listen(coverageContainerDiv,
+        brt.constants.EventType.COLLECT_PERIODIC_COVERAGE,
+        brt.backgroundInteraction.showCoverage, true);
+  }
 };
 
 
-goog.events.listen(window, 'load', brt.backgroundInteraction.showCoverage,
-    true);
 goog.events.listen(goog.global.document, 'click',
-    brt.backgroundInteraction.showCoverage, true);
-goog.events.listen(goog.global.document, 'mouseover',
     brt.backgroundInteraction.showCoverage, true);
 
 brt.backgroundInteraction.setBeforeUnloadHandler();

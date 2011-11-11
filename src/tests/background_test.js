@@ -47,40 +47,43 @@ function tearDown() {
 }
 
 
-function testOnRequestLoadScript() {
+function testOnConnectLoadScript() {
   stubs_.replace(goog.net.XhrIo, 'send', goog.testing.net.XhrIo.send);
-  var request = {};
-  request['action'] = brt.constants.ActionType.LOAD_SCRIPT;
-  request['url'] = 'http://google.com';
-  var sender = {};
-  var sendResponse = emptyFunction;
+  var msg = {};
+  msg.action = brt.constants.ActionType.LOAD_SCRIPT;
+  msg.url = 'http://google.com';
+  var port = {};
+  port.onMessage = {};
+  port.onMessage.addListener = emptyFunction;
   mockControl_.$replayAll();
-  background_.onRequest(request, sender, sendResponse);
+  background_.onConnect(port);
   mockControl_.$verifyAll();
 }
 
 
-function testOnRequestShowCoverage() {
-  var request = {};
-  request['action'] = brt.constants.ActionType.SHOW_COVERAGE;
-  var sender = {};
-  var sendResponse = emptyFunction;
+function testOnConnectShowCoverage() {
+  var msg = {};
+  msg.action = brt.constants.ActionType.SHOW_COVERAGE;
+  var port = {};
+  port.onMessage = {};
+  port.onMessage.addListener = emptyFunction;
   stubs_.set(brt.coverageHelper, 'showCoverageInPopup', emptyFunction);
   mockControl_.$replayAll();
-  background_.onRequest(request, sender, sendResponse);
+  background_.onConnect(port);
   mockControl_.$verifyAll();
 }
 
 
-function testOnRequestSubmitCoverage() {
-  var request = {};
-  request['action'] = brt.constants.ActionType.SUBMIT_COVERAGE_INFO;
-  request['coverageData'] = 'http://google.com';
-  var sender = {};
-  var sendResponse = emptyFunction;
+function testOnConnectSubmitCoverage() {
+  var msg = {};
+  msg.action = brt.constants.ActionType.SUBMIT_COVERAGE_INFO;
+  msg.coverageData = 'http://google.com';
+  var port = {};
+  port.onMessage = {};
+  port.onMessage.addListener = emptyFunction;
   stubs_.set(brt.coverageHelper, 'acceptCoverageInfo', emptyFunction);
   mockControl_.$replayAll();
-  background_.onRequest(request, sender, sendResponse);
+  background_.onConnect(port);
   mockControl_.$verifyAll();
 }
 

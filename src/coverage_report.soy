@@ -88,10 +88,9 @@
 {template .scriptStat}
   <div id="mergedDataDiv_scriptHead_page{$pageNum}_script{$scriptNum}"
        class="scriptHead">
-    Code from {$scriptSrc}:
-    <div style="float:right">
-      {$scriptExecutedCounter}/{$scriptCommandCounter}
-      ({$scriptCoveragePercent}%)
+    Script {$scriptSrc}
+    <div style="float:right">{$scriptExecutedCounter}/
+      {$scriptCommandCounter} ({$scriptCoveragePercent}%)
     </div>
   </div>
   <div id="mergedDataDiv_scriptBody_page{$pageNum}_script{$scriptNum}"

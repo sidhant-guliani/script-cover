@@ -48,16 +48,14 @@ function tearDown() {
 
 
 function testInit() {
-  var callbackRecord = goog.testing.recordFunction();
   var soyRecorder = goog.testing.recordFunction();
   stubs_.set(soy, 'renderElement', soyRecorder);
 
   mockControl_.$replayAll();
-  popup_.init(callbackRecord);
+  popup_.init();
   mockControl_.$verifyAll();
 
   assertEquals(1, soyRecorder.getCallCount());
-  assertEquals(1, callbackRecord.getCallCount());
 }
 
 
@@ -220,27 +218,5 @@ function testGetCurrentGlobalCoverageForNoTrackedStats() {
 
   popup_.getCurrentGlobalCoverage_();
   assertEquals('0%', fileStatsTitle.innerHTML);
-}
-
-
-function testOnRequest() {
-  var request = {};
-  request['action'] =
-      brt.constants.ActionType.GET_GLOBAL_COVERAGE_PERCENT_TO_POPUP;
-  request['globalCoveragePercent'] = 55.7;
-  var sender = {};
-  var sendResponse = emptyFunction;
-  var soyRecorder = goog.testing.recordFunction();
-  stubs_.set(soy, 'renderElement', soyRecorder);
-  stubs_.set(popup_, 'setPopupHandler_', emptyFunction);
-  mockControl_.$replayAll();
-  popup_.onRequest(request, sender, sendResponse);
-  mockControl_.$verifyAll();
-
-  assertEquals(55.7, popup_.globalCoverageLast_);
-  assertEquals(1, soyRecorder.getCallCount());
-  var args = soyRecorder.getLastCall().getArguments();
-  assertEquals(goog.dom.getDocument().body, args[0]);
-  assertEquals(brt.content.Templates.popup.all, args[1]);
 }
 

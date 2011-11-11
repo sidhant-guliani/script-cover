@@ -27,6 +27,8 @@ goog.provide('brt.constants');
  * @export
  */
 brt.constants.ActionType = {
+  IS_TAB_SELECTED: 'isTabSelected',
+  TAB_IS_SELECTED: 'tabIsSelected',
   LOAD_SCRIPT: 'loadScript',
   SUBMIT_COVERAGE_INFO: 'submitCoverageInfo',
   SHOW_COVERAGE: 'showCoverage',
@@ -42,6 +44,7 @@ brt.constants.ActionType = {
  */
 brt.constants.EventType = {
   BEFORE_UNLOAD: 'beforeunload',
+  COLLECT_PERIODIC_COVERAGE: 'collectPeriodicCoverage',
   SUBMIT_COVERAGE_INFO: 'submitCoverageInfo',
   SHOW_COVERAGE: 'showCoverage'
 };

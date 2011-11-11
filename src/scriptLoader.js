@@ -87,9 +87,9 @@ brt.loader.prototype.injectCompiledScript_ = function() {
  */
 brt.loader.prototype.submitCoverageInfo_ = function() {
   var data = goog.json.parse(this.coverageContainer_.innerHTML);
-  chrome.extension.sendRequest(
-      {'action': brt.constants.ActionType.SUBMIT_COVERAGE_INFO,
-       'coverageData': data});
+  var port = chrome.extension.connect();
+  port.postMessage({action: brt.constants.ActionType.SUBMIT_COVERAGE_INFO,
+       coverageData: data});
 };
 
 
@@ -98,8 +98,8 @@ brt.loader.prototype.submitCoverageInfo_ = function() {
  * @private
  */
 brt.loader.prototype.showCoverage_ = function() {
-  chrome.extension.sendRequest(
-      {'action': brt.constants.ActionType.SHOW_COVERAGE});
+  var port = chrome.extension.connect();
+  port.postMessage({action: brt.constants.ActionType.SHOW_COVERAGE});
 };
 
 
@@ -129,23 +129,31 @@ brt.loader.prototype.addResourcesToPage = function() {
 
 
 /**
- * Handles data received from background script, then sends it to popup.
- * @param {Object} request Data sent in the request.
- * @param {Object} sender Origin of the request.
- * @param {Function} callback The method to call when the request completes.
+ * Sends periodic events to collect coverage data.
  */
-brt.loader.prototype.onRequest = function(request, sender, callback) {
-  if (request['action'] ==
-      brt.constants.ActionType.GET_GLOBAL_COVERAGE_PERCENT) {
-        chrome.extension.sendRequest(
-            {'action':
-                brt.constants.ActionType.GET_GLOBAL_COVERAGE_PERCENT_TO_POPUP,
-            'globalCoveragePercent': request['globalCoveragePercent'],
-            'globalCommandCounter': request['globalCommandCounter'],
-            'fileStats': request['fileStats']});
-  }
+brt.loader.prototype.sendCollectCoverageEvents = function() {
+  var containerDiv = goog.dom.getElement('coverageContainerDiv');
+  var event = goog.global.document.createEvent('Event');
+  event.initEvent(brt.constants.EventType.COLLECT_PERIODIC_COVERAGE,
+      true, true);
+  containerDiv.dispatchEvent(event);
 };
 
-chrome.extension.onRequest.addListener(goog.bind(
-    brt.loader.getInstance().onRequest, brt.loader.getInstance()));
+
+/**
+ * Handles data received from background script, then sends it to popup.
+ * @param {Object} port Port object to communicate with background script.
+ */
+brt.loader.prototype.onConnect = function(port) {
+  this.port_ = port;
+  port.onMessage.addListener(goog.bind(function(msg) {
+    if (msg.action == brt.constants.ActionType.TAB_IS_SELECTED) {
+      this.sendCollectCoverageEvents();
+    }
+  }, this));
+};
+
+
+chrome.extension.onConnect.addListener(goog.bind(
+    brt.loader.getInstance().onConnect, brt.loader.getInstance()));
 

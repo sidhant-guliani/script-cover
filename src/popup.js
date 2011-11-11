@@ -9,7 +9,6 @@ goog.provide('brt.popup');
 
 goog.require('brt.constants');
 goog.require('brt.content.Templates.popup');
-goog.require('brt.coverageHelper');
 goog.require('goog.dom');
 goog.require('goog.events');
 goog.require('goog.json');
@@ -28,10 +27,10 @@ goog.require('goog.ui.ToggleButton');
 brt.popup = function() {
   /**
    * The last global coverage statistic.
-   * @type {number}
+   * @type {string}
    * @private
    */
-  this.globalCoverageLast_ = 0;
+  this.globalCoverageLast_ = '0';
 
 
   /**
@@ -54,14 +53,9 @@ goog.addSingletonGetter(brt.popup);
 
 /**
  * Initializes the popup instance.
- * @param {function()=} opt_initCallback An optional callback
- *     that is invoked when initialization is finished.
  * @export
  */
-brt.popup.prototype.init = function(opt_initCallback) {
-  var callback = opt_initCallback || goog.nullFunction;
-  callback();
-
+brt.popup.prototype.init = function() {
   soy.renderElement(goog.dom.getDocument().body,
       brt.content.Templates.popup.waiting);
 };
@@ -213,7 +207,7 @@ brt.popup.prototype.changeTracking_ = function(fileIndex) {
 
 
 /**
- * gets and displays current global coverage which depends on tracked/untracked
+ * Gets and displays current global coverage which depends on tracked/untracked
  * scripts.
  * @private
  */
@@ -227,7 +221,6 @@ brt.popup.prototype.getCurrentGlobalCoverage_ = function() {
     }
   }
 
-  // TODO: Current global coverage percent should be sent back to background.
   // Calculates current global coverage percent.
   var currentGlobalCoverage = ((trackedExecutedCounter * 100.0) /
       trackedCommandCounter).toFixed(1);
@@ -243,45 +236,35 @@ brt.popup.prototype.getCurrentGlobalCoverage_ = function() {
 
 
 /**
- * Handles data sent via chrome.extension.sendRequest() from content scripts.
- * @param {Object} request Data sent in the request.
- * @param {Object} sender Origin of the request.
- * @param {Function} callback The method to call when the request completes.
+ * Updates coverage statistics in popup when they changed in background.
+ * @param {string} globalCoveragePercent The global coverage percent.
+ * @param {string} globalCoveragePercentLast The last global coverage percent.
+ * @param {number} globalCommandCounter The global number of commands.
+ * @param {Array} fileStats The coverage statistics for a script.
  */
-brt.popup.prototype.onRequest = function(request, sender, callback) {
-  // TODO: Start using chrome.extension.getBackgroundPage to access data in
-  // background page.
-  switch (request['action']) {
-    case brt.constants.ActionType.GET_GLOBAL_COVERAGE_PERCENT_TO_POPUP:
-      var globalCoverageStatElem = goog.dom.getElement('globalCoverage');
-      if (request['globalCoveragePercent'] != this.globalCoverageLast_) {
-        this.fileStats_ = request['fileStats'];
+brt.popup.prototype.updateCoverage = function(globalCoveragePercent,
+    globalCoveragePercentLast, globalCommandCounter, fileStats) {
+  var globalCoverageStatElem = goog.dom.getElement('globalCoverage');
+  if (globalCoveragePercent != this.globalCoverageLast_) {
+    this.globalCoverageLast_ = globalCoveragePercentLast;
+    this.fileStats_ = fileStats;
 
-        if (globalCoverageStatElem) {
-          soy.renderElement(globalCoverageStatElem,
-              brt.content.Templates.popup.header,
-              {globalCoverageCurrent: request['globalCoveragePercent'] + '%',
-               globalCoverageLast: this.globalCoverageLast_ + '%',
-               globalCommandCounter: request['globalCommandCounter']});
-        } else {
-          soy.renderElement(goog.dom.getDocument().body,
-              brt.content.Templates.popup.all,
-              {rootFolder: this.resourcesFolder_,
-               globalCoverageCurrent: request['globalCoveragePercent'] + '%',
-               globalCoverageLast: this.globalCoverageLast_ + '%',
-               globalCommandCounter: request['globalCommandCounter']});
-        }
-        this.setPopupHandler_();
-        this.globalCoverageLast_ = request['globalCoveragePercent'];
-      }
-      break;
+    if (globalCoverageStatElem) {
+      soy.renderElement(globalCoverageStatElem,
+          brt.content.Templates.popup.header,
+          {globalCoverageCurrent: globalCoveragePercent + '%',
+           globalCoverageLast: this.globalCoverageLast_ + '%',
+           globalCommandCounter: globalCommandCounter});
+    } else {
+      soy.renderElement(goog.dom.getDocument().body,
+          brt.content.Templates.popup.all,
+          {rootFolder: this.resourcesFolder_,
+           globalCoverageCurrent: globalCoveragePercent + '%',
+           globalCoverageLast: this.globalCoverageLast_ + '%',
+           globalCommandCounter: globalCommandCounter});
+    }
+    this.setPopupHandler_();
+    this.globalCoverageLast_ = globalCoveragePercent;
   }
 };
-
-
-chrome.extension.onRequest.addListener(goog.bind(
-    brt.popup.getInstance().onRequest, brt.popup.getInstance()));
-
-goog.events.listen(window, 'load', goog.bind(function() {
-    setTimeout('brt.popup.getInstance().init()', 0)}, this));
 

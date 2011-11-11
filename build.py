@@ -33,8 +33,6 @@ CLOSURE_COMPILER_URL = ('http://closure-compiler.googlecode.com/files/'
                         'compiler-latest.zip')
 SOY_COMPILER_URL = ('http://closure-templates.googlecode.com/files/'
                     'closure-templates-for-javascript-latest.zip')
-SOYDATA_URL = ('http://closure-templates.googlecode.com/svn/trunk/javascript/'
-               'soydata.js')
 COMPILE_CLOSURE_COMMAND = ('closure-library/closure/bin/build/closurebuilder.py'
                            ' --root=src'
                            ' --root=closure-library'
@@ -154,15 +152,6 @@ def SetupClosure():
         not os.path.exists(os.path.join('build_gen', 'soyutils_usegoog.js'))):
       logging.error('Could not download the soy compiler jar.')
       raise ClosureError('Could not find the soy compiler.')
-
-  # Download required soydata file, which is required for soyutils_usegoog.js
-  # to work.
-  if not os.path.exists(os.path.join('build_gen', 'soydata.js')):
-    urllib.urlretrieve(SOYDATA_URL, os.path.join('build_gen', 'soydata.js'))
-    if not os.path.exists(os.path.join('build_gen', 'soydata.js')):
-      logging.error('Could not download soydata.js.')
-      raise ClosureError('Could not fine soydata.js')
-
 
 def main():
   usage = 'usage: %prog [options]'

@@ -26,6 +26,7 @@ goog.provide('brt.coverageHelper');
 goog.require('brt.constants');
 goog.require('brt.content.Templates.coverageReport');
 goog.require('brt.loader');
+goog.require('brt.popup');
 goog.require('goog.dom.DomHelper');
 goog.require('goog.string.StringBuffer');
 goog.require('goog.style');
@@ -42,7 +43,7 @@ brt.coverageHelper.globalCoveragePercent = '0';
  * The previous global coverage percent statistic.
  * @type {string}
  */
-brt.coverageHelper.globalCoveragePercentLast = '-1';
+brt.coverageHelper.globalCoveragePercentLast = '0';
 
 
 /**
@@ -76,10 +77,6 @@ brt.coverageHelper.globalCommandCounterLast = 0;
 brt.coverageHelper.acceptCoverageInfo = function(tabId, data) {
   if (!brt.background.scriptInfo[tabId]) {
     brt.background.scriptInfo[tabId] = [];
-  }
-
-  if (!brt.background.rawScriptInfo[tabId]) {
-    brt.background.rawScriptInfo[tabId] = [];
   }
 
   // Iterates through each block of code in each script. If the element of the
@@ -152,9 +149,6 @@ brt.coverageHelper.acceptCoverageInfo = function(tabId, data) {
     // Page wasn't presented before in the coverage data.
     brt.background.scriptInfo[tabId].push(goog.object.unsafeClone(data));
   }
-
-  // rawScriptInfo doesn't need any merge, so data should be just added there.
-  brt.background.rawScriptInfo[tabId].push(goog.object.unsafeClone(data));
 };
 
 
@@ -365,9 +359,6 @@ brt.coverageHelper.spaceReplacer_ = function(str) {
  * @param {number} tabId ID of tab that requests coverage.
  */
 brt.coverageHelper.showCoverage = function(tabId) {
-  console.log('brt.background.scriptInfo[tabId]');
-  console.log(brt.background.scriptInfo);
-  console.log(brt.background.scriptInfo[tabId]);
   var coverageWindow = goog.global.window.open('about:blank', '_blank');
   var coverageDocument = coverageWindow.document;
   var coverageDom = new goog.dom.DomHelper(coverageDocument);
@@ -392,6 +383,10 @@ brt.coverageHelper.showCoverageInPopup = function(tabId) {
   var globalExecutedCounter = 0;
   var tabScriptInfo = brt.background.scriptInfo[tabId];
   var fileStats = [];
+
+  if (!tabScriptInfo) {
+    return;
+  }
 
   for (var pageNum = 0; pageNum < tabScriptInfo.length; pageNum++) {
     // Consider one page.
@@ -467,24 +462,24 @@ brt.coverageHelper.showCoverageInPopup = function(tabId) {
   chrome.browserAction.setBadgeText({text:
       brt.coverageHelper.globalCoveragePercent});
 
+  var popup = null;
+
   chrome.tabs.getSelected(null, function(tab) {
     if (brt.coverageHelper.globalCoveragePercent !=
         brt.coverageHelper.globalCoveragePercentLast) {
-      chrome.tabs.sendRequest(tab.id,
-          {'action': brt.constants.ActionType.GET_GLOBAL_COVERAGE_PERCENT,
-           'globalCoveragePercent': brt.coverageHelper.globalCoveragePercent,
-           'globalCommandCounter': globalCommandCounter,
-           'fileStats': fileStats});
+      popup = new brt.popup();
+      popup.updateCoverage(brt.coverageHelper.globalCoveragePercent,
+          brt.coverageHelper.globalCoveragePercentLast, globalCommandCounter,
+          fileStats);
       brt.coverageHelper.globalCoveragePercentLast =
           brt.coverageHelper.globalCoveragePercent;
     }
 
     if (brt.coverageHelper.globalCommandCounterLast != globalCommandCounter) {
-      chrome.tabs.sendRequest(tab.id,
-          {'action': brt.constants.ActionType.GET_GLOBAL_COVERAGE_PERCENT,
-           'globalCoveragePercent': brt.coverageHelper.globalCoveragePercent,
-           'globalCommandCounter': globalCommandCounter,
-           'fileStats': fileStats});
+      popup = new brt.popup();
+      popup.updateCoverage(brt.coverageHelper.globalCoveragePercent,
+          brt.coverageHelper.globalCoveragePercentLast, globalCommandCounter,
+          fileStats);
       brt.coverageHelper.globalCommandCounterLast = globalCommandCounter;
     }
   });

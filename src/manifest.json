@@ -1,6 +1,6 @@
 {
   "name": "ScriptCover",
-  "version": "1.0.0.0",
+  "version": "1.0.0.2",
   "description": "ScriptCover is a Javascript coverage analysis tool for web pages.",
   "background_page": "background.html",
   "content_scripts": [

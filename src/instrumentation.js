@@ -74,7 +74,7 @@ brt.content.instrumentation.updateScriptObject_ = function(data) {
     window.scriptObjects[last].empty = false;
   } else {
     brt.content.instrumentation.addScriptObject_(false,
-        goog.global.window.location.href + ': internal script', data);
+        goog.global.window.location.href + ' (internal script)', data);
   }
 };
 
@@ -208,15 +208,16 @@ brt.content.instrumentation.requestScriptContent_ = function(scriptElement,
   }
 
   console.log('Requesting external script ' + src + '...');
-  chrome.extension.sendRequest(
-      {'action' : brt.constants.ActionType.LOAD_SCRIPT, 'url' : src},
-      function(newContent) {
+  var port = chrome.extension.connect();
+  port.postMessage({action: brt.constants.ActionType.LOAD_SCRIPT, url: src});
+  port.onMessage.addListener(function(msg) {
+    if (msg.response) {
         brt.content.instrumentation.addScriptObject_(true, src);
         scriptElement.removeAttribute('src');
-        scriptElement.innerHTML = newContent;
+        scriptElement.innerHTML = msg.data;
         brt.content.instrumentation.instrumentScripts_(index);
-      });
-
+    }
+  });
   return true;
 };
 

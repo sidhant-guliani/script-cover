@@ -66,17 +66,12 @@ function testShowCoverageInPopupWithoutTabScriptInfo() {
   brt.background = {};
   brt.background.scriptInfo = {};
   brt.background.scriptInfo[1] = {};
-  var sendRequestRecorder = goog.testing.recordFunction();
-  stubs_.set(chrome.tabs, 'sendRequest', sendRequestRecorder);
 
   mockControl_.$replayAll();
   brt.coverageHelper.showCoverageInPopup(1);
   mockControl_.$verifyAll();
   assertEquals('0', brt.coverageHelper.globalCoveragePercent);
   assertEquals('0', brt.coverageHelper.globalCoveragePercentLast);
-  var args = sendRequestRecorder.getLastCall().getArguments();
-  assertEquals(brt.constants.ActionType.GET_GLOBAL_COVERAGE_PERCENT,
-      args[1]['action']);
 }
 
 
@@ -89,16 +84,13 @@ function testShowCoverageInPopupWithTabScriptInfo() {
       executedBlock: [0, 1, 1],
       'instrumented': '//BRT_BLOCK_BEGIN%3A1//BRT_BLOCK_END%3A11'}],
       url: 'http://www.google.nl/'}];
-  var sendRequestRecorder = goog.testing.recordFunction();
-  stubs_.set(chrome.tabs, 'sendRequest', sendRequestRecorder);
+  var seeDetailsLink = goog.dom.getElement('fileStatsTitle');
+  stubs_.set(goog.dom.getDocument(), 'querySelector',
+             function() {return fileStatsTitle});
 
   brt.coverageHelper.showCoverageInPopup(1);
   assertEquals('100.0', brt.coverageHelper.globalCoveragePercent);
   assertEquals('100.0', brt.coverageHelper.globalCoveragePercentLast);
-  var args = sendRequestRecorder.getLastCall().getArguments();
-  assertEquals(brt.constants.ActionType.GET_GLOBAL_COVERAGE_PERCENT,
-      args[1]['action']);
-  assertEquals(135, args[1]['globalCommandCounter']);
 }
 
 
