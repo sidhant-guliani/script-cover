@@ -33,7 +33,9 @@ CLOSURE_COMPILER_URL = ('http://closure-compiler.googlecode.com/files/'
                         'compiler-latest.zip')
 SOY_COMPILER_URL = ('http://closure-templates.googlecode.com/files/'
                     'closure-templates-for-javascript-latest.zip')
-COMPILE_CLOSURE_COMMAND = ('closure-library/closure/bin/build/closurebuilder.py'
+COMPILE_CLOSURE_COMMAND = ('python '
+                           os.path.join('closure-library', 'closure', 'bin',
+                                        'build', 'closurebuilder.py')
                            ' --root=src'
                            ' --root=closure-library'
                            ' --root=build_gen'
