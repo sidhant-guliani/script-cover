@@ -33,15 +33,16 @@ CLOSURE_COMPILER_URL = ('http://closure-compiler.googlecode.com/files/'
                         'compiler-latest.zip')
 SOY_COMPILER_URL = ('http://closure-templates.googlecode.com/files/'
                     'closure-templates-for-javascript-latest.zip')
-COMPILE_CLOSURE_COMMAND = ('python '
-                           os.path.join('closure-library', 'closure', 'bin',
-                                        'build', 'closurebuilder.py')
-                           ' --root=src'
-                           ' --root=closure-library'
-                           ' --root=build_gen'
-                           ' --output_mode=compiled'
-                           ' --output_file=%s'
-                           ' --compiler_jar=compiler.jar')
+COMPILE_CLOSURE_COMMAND = ' '.join(['python',
+                                    os.path.join('closure-library', 'closure',
+                                                 'bin', 'build',
+                                                 'closurebuilder.py'),
+                                    '--root=src',
+                                    '--root=closure-library',
+                                    '--root=build_gen',
+                                    '--output_mode=compiled',
+                                    '--output_file=%s',
+                                    '--compiler_jar=compiler.jar'])
 SOY_COMPILER_COMMAND = ('java -jar SoyToJsSrcCompiler.jar'
                         ' --shouldProvideRequireSoyNamespaces'
                         ' --outputPathFormat %(output)s'
