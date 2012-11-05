@@ -1,8 +1,13 @@
 {
+  "manifest_version": 2,
   "name": "ScriptCover",
-  "version": "1.0.0.2",
+  "version": "1.0.0.3",
   "description": "ScriptCover is a Javascript coverage analysis tool for web pages.",
-  "background_page": "background.html",
+  "background": {
+      "scripts": [
+          "background_compiled.js"
+      ]
+  },
   "content_scripts": [
     {
       "matches": ["http://*/*", "https://*/*"],
@@ -16,12 +21,16 @@
   ],
   "browser_action": {
     "default_icon": "brticon.png",
-    "popup": "popup.html"
+    "default_popup": "popup.html"
   },
   "permissions": [
     "tabs",
     "http://*/*",
     "https://*/*",
     "management"
+  ],
+  "web_accessible_resources": [
+    "inject_compiled.js",
+    "styles/coverage_report.css"
   ]
 }
