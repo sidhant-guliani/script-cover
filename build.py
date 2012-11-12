@@ -202,8 +202,7 @@ def main():
     shutil.rmtree(os.path.join('build', 'third_party'))
   shutil.copytree(os.path.join('src', 'third_party'),
                   os.path.join('build', 'third_party'))
-  static_files = [os.path.join('src', 'background.html'),
-                  os.path.join('src', 'popup.html'),
+  static_files = [os.path.join('src', 'popup.html'),
                   os.path.join('src', 'manifest.json'),
                   os.path.join('src', 'brticon.png')]
   for static_file in static_files:
