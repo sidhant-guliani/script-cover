@@ -226,20 +226,10 @@ function parse_js_number(num) {
 }
 
 function JS_Parse_Error(message, line, col, pos) {
-        this.message = message;
-        this.line = line;
-        this.col = col;
-        this.pos = pos;
-        try {
-                ({})();
-        } catch (ex) {
-                this.stack = ex.stack;
-        }
+        this.message = message + ' (line: ' + line + ', col: ' + col + ', pos: ' + pos + ')\n';
+        // slice away the 'Error: ' message and the call to JS_Parse_Error
+        this.stack = (new Error()).stack.split('\n').slice(2).join('\n').trimLeft();
 }
-
-JS_Parse_Error.prototype.toString = function() {
-        return this.message + ' (line: ' + this.line + ', col: ' + this.col + ', pos: ' + this.pos + ')' + '\n\n' + this.stack;
-};
 
 function js_error(message, line, col, pos) {
         throw new JS_Parse_Error(message, line, col, pos);
@@ -668,7 +658,8 @@ function parse($TEXT, strict_mode, embed_tokens) {
                 if (is(type, val)) {
                         return next();
                 }
-                token_error(S.token, 'Unexpected token ' + S.token.type + ', expected ' + type);
+                token_error(S.token, 'Unexpected token: ' + S.token.type + '(' + S.token.value +
+                        '), expected ' + type + '(' + val + ')');
         };
 
         function expect(punc) { return expect_token('punc', punc); };
